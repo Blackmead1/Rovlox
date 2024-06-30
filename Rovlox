@@ -1,45 +1,30 @@
--- Place this script in ServerScriptService
+-- Define the size of the box (you can adjust these values)
+local boxSize = Vector3.new(2, 2, 2)
 
-local function highlightPlayer(player)
-    -- Create a highlight effect (for example, change the player's shirt color to yellow)
+-- Function to create a red box part
+local function createRedBox()
+    local box = Instance.new("Part")
+    box.Size = boxSize
+    box.BrickColor = BrickColor.new("Bright red")
+    box.Anchored = true
+    box.CanCollide = false
+    box.Transparency = 0.5  -- Adjust transparency as needed
+    return box
+end
+
+-- Function to add the red box to a player
+local function addRedBoxToPlayer(player)
     local character = player.Character
     if character then
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            local shirt = Instance.new("Shirt")
-            shirt.Name = "HighlightShirt"
-            shirt.ShirtTemplate = "rbxassetid://123456789"  -- Replace with the shirt asset ID for your highlight color
-            shirt.Parent = character
-            
-            -- You can also change the color of the character's head for additional highlight effect
-            local head = character:FindFirstChild("Head")
-            if head then
-                local headMesh = head:FindFirstChildOfClass("SpecialMesh")
-                if headMesh then
-                    headMesh.TextureId = "rbxassetid://987654321"  -- Replace with the head texture asset ID for your highlight color
-                end
-            end
-        end
+        local box = createRedBox()
+        box.Parent = character  -- Attach the box to the player's character
     end
 end
 
-local function onPlayerAdded(player)
-    player.CharacterAdded:Connect(function(character)
-        highlightPlayer(player)
-    end)
+-- Connect the function to run when players join the game
+game.Players.PlayerAdded:Connect(addRedBoxToPlayer)
+
+-- Loop through existing players and add the red box
+for _, player in pairs(game.Players:GetPlayers()) do
+    addRedBoxToPlayer(player)
 end
-
-game.Players.PlayerAdded:Connect(onPlayerAdded)
-
--- Optional: You may want to remove the highlight when the player leaves the game
-local function onPlayerRemoving(player)
-    local character = player.Character
-    if character then
-        local highlightShirt = character:FindFirstChild("HighlightShirt")
-        if highlightShirt then
-            highlightShirt:Destroy()
-        end
-    end
-end
-
-game.Players.PlayerRemoving:Connect(onPlayerRemoving)
