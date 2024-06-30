@@ -1,18 +1,45 @@
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+-- Place this script in ServerScriptService
 
-local flingForce = Vector3.new(0, 1000, 0)
-
-local function onActivated()
-    humanoid.Sit = true
-    humanoid.Sit = false
-    humanoid.PlatformStand = true
-    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-
-    humanoid.PlatformStand = false
-
-    humanoid:Move(flingForce)
+local function highlightPlayer(player)
+    -- Create a highlight effect (for example, change the player's shirt color to yellow)
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local shirt = Instance.new("Shirt")
+            shirt.Name = "HighlightShirt"
+            shirt.ShirtTemplate = "rbxassetid://123456789"  -- Replace with the shirt asset ID for your highlight color
+            shirt.Parent = character
+            
+            -- You can also change the color of the character's head for additional highlight effect
+            local head = character:FindFirstChild("Head")
+            if head then
+                local headMesh = head:FindFirstChildOfClass("SpecialMesh")
+                if headMesh then
+                    headMesh.TextureId = "rbxassetid://987654321"  -- Replace with the head texture asset ID for your highlight color
+                end
+            end
+        end
+    end
 end
 
-script.Parent.Activated:Connect(onActivated)
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function(character)
+        highlightPlayer(player)
+    end)
+end
+
+game.Players.PlayerAdded:Connect(onPlayerAdded)
+
+-- Optional: You may want to remove the highlight when the player leaves the game
+local function onPlayerRemoving(player)
+    local character = player.Character
+    if character then
+        local highlightShirt = character:FindFirstChild("HighlightShirt")
+        if highlightShirt then
+            highlightShirt:Destroy()
+        end
+    end
+end
+
+game.Players.PlayerRemoving:Connect(onPlayerRemoving)
