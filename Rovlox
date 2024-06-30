@@ -1,0 +1,18 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local flingForce = Vector3.new(0, 1000, 0)
+
+local function onActivated()
+    humanoid.Sit = true
+    humanoid.Sit = false
+    humanoid.PlatformStand = true
+    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+    humanoid.PlatformStand = false
+
+    humanoid:Move(flingForce)
+end
+
+script.Parent.Activated:Connect(onActivated)
